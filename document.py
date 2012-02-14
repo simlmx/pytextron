@@ -1,0 +1,3 @@
+class LatexFile(object):
+    pass
+    
