@@ -1,6 +1,6 @@
 # TODO : Organize those in more clever files
 
-from pytextron.base import Command, Environment
+from base import Command, Environment
 
 class Document(Environment):
     name = 'document'
@@ -8,7 +8,7 @@ class Document(Environment):
 class PageBreak(Command):
     template = r'\pagebreak'
 
-class Usepackage(Environment):
+class Usepackage(Command):
     name = 'usepackage'
 
 class Center(Environment):

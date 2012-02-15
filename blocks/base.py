@@ -1,8 +1,6 @@
 class Block(object):
 
-    """ Latex base block. 
-        
-    """
+    """ Latex base block. """
 
     template = u'%(content)s'
 
@@ -10,16 +8,14 @@ class Block(object):
         self.content = content
 
     def __unicode__(self):
-        return self.template % self.__dict__
+        return self.template % dict(self.__dict__, **self.__class__.__dict__)
 
     def __add__(self, other):
         return u'%s %s' % (self, other)
 
-def block_indent(content, tab = '    '):
-    """ Adds `tab` in front of each line of content. """
-    lines = content.split(endl)
-    lines = [ tab + l + endl for l in lines[:-1] ] + lines[-1:]
-    return u''.join(lines)
+    def __radd__(self, other):
+        return u'%s %s' % (other, self)
+
 
 class Container(Block):
 
@@ -33,7 +29,17 @@ class Container(Block):
     # \end{foo}
     # depending whether indent is False or True
     template = u'%(content)s'
+    tab = '\t'
 
+    def _block_indent(self, content, tab=None):
+        """ Adds `tab` in front of each line of content. """
+        if tab is None:
+            tab = self.tab
+        endl = '\n'
+        lines = content.split(endl)
+        lines = [ tab + l + endl for l in lines ]
+        return u''.join(lines)[:-1]
+      
     def __init__(self, content='', indent=True):
         """ Constructor for Container object.
             
@@ -45,30 +51,33 @@ class Container(Block):
                 or not :
                 "before inside after"
         """
-
-        #self.content = content
         if indent:
-            content = '\n%s\n' % block_indent(content)
-        
+            content = '\n%s\n' % self._block_indent(unicode(content))
+        else:
+            content = u' %s ' % content
         self.content = content
 
 class ParseArgsMixin(object):
 
     """ Argument parsing for Command and Environment. """
 
-    def _parse(args, template = '[%s]'):
+    def parse_def_args(self, args):
         if args is None:
             args = ''
         elif isinstance(args, basestring):
             args = [args]
         args = ', '.join(args)
-        return template % options if options else ''
-
-    def parse_def_args(self, args):
-        return _parse(args)
+        return '[%s]' % args if args else ''
 
     def parse_args(self, args):
-        return _parse(args, '{%s}')
+        if args is None:
+            args = ''
+        elif isinstance(args, basestring):
+            args = [args]
+        args = '}{'.join(args)
+        if args:
+            args = '{%s}' % args
+        return args
 
         
 
@@ -81,9 +90,13 @@ class Environment(Container, ParseArgsMixin):
     template = ur'\begin{%(name)s}' '%(def_args)s' '%(args)s' '%(content)s' ur'\end{%(name)s}'
 
     def __init__(self, content='', indent=True, def_args=None, args=None):
+        """
+            Note : giving a `content` is the same as appending it to `args`
+            except that we are going to indent it if `indent`=True
+        """
         super(Environment, self).__init__(content, indent)
-        self.args = parse_args(args)
-        self.def_args = parse_def_args(def_args)
+        self.args = self.parse_args(args)
+        self.def_args = self.parse_def_args(def_args)
 
 class Command(Block, ParseArgsMixin):
 
@@ -91,9 +104,8 @@ class Command(Block, ParseArgsMixin):
     
     # Set this when subclassing
     name = ''
-    template = ur'\%(name)s' '%(def_args)s' '%(args)s' '{%(content)s}'
+    template = ur'\%(name)s' '%(def_args)s' '%(args)s'
 
-    def __init__(self, content='', def_args=None, args=None):
-        super(Command, self).__init__(content)
+    def __init__(self, args=None, def_args=None):
         self.args = self.parse_args(args)
         self.def_args = self.parse_def_args(def_args)
