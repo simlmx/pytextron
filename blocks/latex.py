@@ -5,14 +5,25 @@ from base import Command, Environment, Container
 class Document(Environment):
     name = 'document'
 
-class PageBreak(Command):
-    template = r'\pagebreak'
+class Documentclass(Command):
+    name = 'documentclass'
 
 class Usepackage(Command):
     name = 'usepackage'
 
+
+class PageBreak(Command):
+    template = r'\pagebreak'
+
 class Center(Environment):
     name = 'center'
+
+for name in 'section subsection subsubsection'.split():
+    exec(
+"""class %s(Environment):
+    name = '%s'""" % (name.capitalize(), name)
+    )
+
 
 class Eq(Container):
     indent = False
@@ -23,14 +34,14 @@ class DisplayEq(Container):
     before = after = '$$'
 
 # Math
-# 
-# class Sqrt(Command):
-#     name = 'sqrt'
-#     min_args = 1
-# 
-# class Frac(Command):
-#     name = 'frac'
-#     min_args = 2
+
+class Sqrt(Command):
+    name = 'sqrt'
+    min_args = 1
+
+class Frac(Command):
+    name = 'frac'
+    min_args = 2
 
 if 0 :
     endl = u'\n'

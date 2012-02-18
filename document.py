@@ -31,7 +31,10 @@ class LatexDocument(object):
             f.write(unicode(self.content))
 
     def make_pdf(self, tex_file):
-
+        """
+            Assumes the tex file has already been made.
+            If not use `self.make`.
+        """
         cwd = dirname(tex_file)
         if cwd == '' : cwd = '.'
         for i in range(self.nb_compile_times):

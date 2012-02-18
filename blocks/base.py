@@ -107,8 +107,9 @@ class ParseArgsMixin(object):
         args = self.args
         if args is None:
             args = ''
-        elif isinstance(args, basestring):
+        elif isinstance(args, (basestring, Block)):
             args = [args]
+        args = map(unicode, args)
         if len(args) < self.min_args:
             raise ArgumentError(
                 '%s needs at least %i argument; %i given' % (self, self.min_args, len(args))
@@ -135,15 +136,15 @@ class Environment(Container, ParseArgsMixin):
         return ur'\end{{{self.name}}}'.format(self=self)
 
 
-    def __init__(self, content=None, def_args=None, args=None):
+    def __init__(self, content=None, args=None, def_args=None):
         """
             Note : giving a `content` is the same as appending it to `args`
             except that we are going to indent it if `indent`=True
             Arguments:
                 content --  The main content. Same as last argument but indented.
+                args    --  Arguments, e.g. \begin{env}{arg1}{arg2}
                 def_args--  Default arguments for the latex environment, ends up
                             in something like \begin{env}[defarg1, defarg2]...
-                args    --  Arguments, e.g. \begin{env}{arg1}{arg2}
         """
         #self.args = self.parse_args(args)
         #self.def_args = self.parse_def_args(def_args)
