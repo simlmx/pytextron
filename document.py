@@ -5,9 +5,16 @@ class LatexDocument(object):
 
     nb_compile_times = 1
 
-    def __init__(self, preambule, core):
-        self.preambule = preambule
-        self.core = core
+    # Either set those while subclassing or pass them to __init__
+    preambule = ''
+    content = ''
+
+    def __init__(self, preambule=None, content=None, nb_compile_times=1):
+        if preambule is not None:
+            self.preambule = preambule
+        if content is not None:
+            self.content = content
+        self.nb_compile_times = nb_compile_times
 
     def make_tex(self, tex_file):
 
@@ -21,7 +28,7 @@ class LatexDocument(object):
         with open(tex_file, 'w') as f:
             f.write(unicode(self.preambule))
             f.write('\n\n')
-            f.write(unicode(self.core))
+            f.write(unicode(self.content))
 
     def make_pdf(self, tex_file):
 

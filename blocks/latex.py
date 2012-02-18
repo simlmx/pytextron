@@ -1,6 +1,6 @@
 # TODO : Organize those in more clever files
 
-from base import Command, Environment
+from base import Command, Environment, Container
 
 class Document(Environment):
     name = 'document'
@@ -14,6 +14,23 @@ class Usepackage(Command):
 class Center(Environment):
     name = 'center'
 
+class Eq(Container):
+    indent = False
+    before = after = '$'
+
+class DisplayEq(Container):
+    indent = False
+    before = after = '$$'
+
+# Math
+# 
+# class Sqrt(Command):
+#     name = 'sqrt'
+#     min_args = 1
+# 
+# class Frac(Command):
+#     name = 'frac'
+#     min_args = 2
 
 if 0 :
     endl = u'\n'
