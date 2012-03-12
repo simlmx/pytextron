@@ -1,30 +1,65 @@
 # TODO : Organize those in more clever files
 
+import sys
 from base import Command, Environment, Container
 
-class Document(Environment):
-    name = 'document'
+# Some environments and commands where we only have ton 
+# inherit and not subclass any fields/methods
 
-class Documentclass(Command):
-    name = 'documentclass'
+# There aren't many right now but I feel there is going to be more of those
+simple_environments = (
+'document',
+'center',
+)
 
-class Usepackage(Command):
-    name = 'usepackage'
+simple_commands = (
+'documentclass', 'usepackage',
+)
+
+def _subclass(name, base_class):
+    namecap = name.capitalize()
+    module = sys.modules[__name__]
+    setattr(module, namecap, type(namecap, (base_class,), {'name' : name}))
+
+for name in simple_environments:
+    _subclass(name, Environment)
+
+for name in simple_commands:
+    _subclass(name, Command)
+
+
+# Section, subsection, subsubsection
+class Section(Environment):
+
+    _name = 'section'
+
+    def __init__(self, title, content, numbering=True):
+        r"""
+            \begin{section*}{title}
+                content
+            \end{section*}
+
+            The star is there only if `show_numbering` is False
+        """
+        super(Section, self).__init__(content, title)
+        self.numbering = numbering
+
+    @property
+    def name(self):
+        return self._name + ('' if self.numbering else '*')
+
+class Subsection(Section):
+    _name = 'subsection'
+
+class Subsubsection(Section):
+    _name = 'subsubsection'
 
 
 class PageBreak(Command):
     template = r'\pagebreak'
 
-class Center(Environment):
-    name = 'center'
 
-for name in 'section subsection subsubsection'.split():
-    exec(
-"""class %s(Environment):
-    name = '%s'""" % (name.capitalize(), name)
-    )
-
-
+# Equations
 class Eq(Container):
     indent = False
     before = after = '$'
@@ -37,11 +72,9 @@ class DisplayEq(Container):
 
 #class Sqrt(Command):
 #    name = 'sqrt'
-#    min_args = 1
 #
 #class Frac(Command):
 #    name = 'frac'
-#    min_args = 2
 
 if 0 :
     endl = u'\n'
