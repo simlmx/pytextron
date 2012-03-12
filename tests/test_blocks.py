@@ -1,5 +1,5 @@
 import unittest
-from pytextron.blocks.base import *
+from pytextron.blocks import *
 
 class TestBasic(unittest.TestCase):
 
@@ -80,17 +80,37 @@ class TestBasic(unittest.TestCase):
                 args = '',
                 def_args ='2')),
             ur'\test[2]'
-        )
+        ) 
 
-    def test_min_args(self):
-        class ComTest(Command):
-            name = 'test'
-            min_args = 2
-        with self.assertRaises(ArgumentError):
-            unicode(ComTest(args = 'patate'))
-        unicode(ComTest(args = ['patate', 'poil']))
-            
+class TestLatex(unittest.TestCase):
 
+    def test_sections(self):
+        self.assertEqual(
+            unicode(Section('patate', Subsection(
+                'poil', 'patatepoil', numbering=False))),
+            ur'\begin{section}{patate}'
+            '\n\t' ur'\begin{subsection*}{poil}'
+            '\n\t\t' 'patatepoil'
+            '\n\t' ur'\end{subsection*}'
+            '\n' ur'\end{section}')
+
+    def test_simple_command(self):
+        self.assertEqual(
+            unicode(Usepackage('patate')),
+            r'\usepackage{patate}')
+
+    def test_simple_env(self):
+        self.assertEqual(
+            unicode(Center('patate')),
+            r'\begin{center}'
+            '\n\t' 'patate'
+            '\n' r'\end{center}')
+
+    def test_eq(self):
+        self.assertEqual(
+            unicode(Eq('a+b')), '$ a+b $')
+        self.assertEqual(
+            unicode(DisplayEq('a+b')), '$$ a+b $$')
 
 if __name__ == '__main__':
     unittest.main()
