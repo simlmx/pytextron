@@ -89,35 +89,31 @@ class ParseArgsMixin(object):
 
     """ Argument parsing for Command and Environment. """
 
-    #Set this when subclassing Command and Environment if it applies
-    min_args = 0
-
-    @property
-    def formated_def_args(self):
-        args = self.def_args
-        if args is None:
-            args = ''
-        elif isinstance(args, basestring):
-            args = [args]
-        args = ', '.join(args)
-        return '[%s]' % args if args else ''
-
-    @property
-    def formated_args(self):
-        args = self.args
-        if args is None:
-            args = ''
+    def _format_any_args(self, args, join_char = '}{', container='{%s}'):
+        if not args:
+            return ''
         elif isinstance(args, (basestring, Block)):
             args = [args]
         args = map(unicode, args)
-        if len(args) < self.min_args:
-            raise ArgumentError(
-                '%s needs at least %i argument; %i given' % (self, self.min_args, len(args))
-                )
-        args = '}{'.join(args)
-        if args:
-            args = '{%s}' % args
-        return args
+        args = join_char.join(args)
+        return container % args
+
+    @property
+    def formated_def_args(self):
+        return self._format_any_args(self.def_args, ', ', '[%s]')
+        
+    @property
+    def formated_args(self):
+        return self._format_any_args(self.args)
+
+    # work in progress...
+    #@property
+    #def formated_kwargs(self):
+    #    kwargs = self.kwargs
+    #    if not isinstance(kwargs, dict):
+    #        raise TypeError(
+    #            'The kwargs argument of the `formated_kwargs` property must be '
+    #            'a dictionary')
         
 
 class Environment(Container, ParseArgsMixin):
@@ -166,4 +162,3 @@ class Command(Block, ParseArgsMixin):
 
     def __init__(self, args=None, def_args=None):
         self.assign_to_self(args=args, def_args=def_args)
-
