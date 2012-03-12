@@ -1,14 +1,23 @@
 from pytextron import *
 from pytextron.blocks import *
 
+class Geometry(Command): name = 'geometry'
+
 LatexDocument(
-    preambule = concatenate(
+    preambule = stack(
         Documentclass('article', def_args='french'),
-        Usepackage(['geometry', 'lmargin=1cm,rmargin=1cm']),
+        Usepackage('geometry', 'letterpaper'),
+        Geometry(args='tmargin=1cm,lmargin=5cm,rmargin=5cm'),
     ),
     content = Document(
-        concatenate(
-            Center('Here is a nice equation'),
+        stack(
+            Center(
+                "I can also add all sorts of text since I've got a keyboard. "
+                "It's quite nice as you can see : I type and type and type. "
+                "I just want to add enough text so I can see if my margins "
+                "worked as expected. Here, that should do it." r'\\'
+                ),
+            'Here is a nice equation',
             DisplayEq(r'\frac{x}{2}= 200'),
         )
     ),
