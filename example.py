@@ -4,6 +4,7 @@ from pytextron.blocks import *
 LatexDocument(
     preambule = concatenate(
         Documentclass('article', def_args='french'),
+        Usepackage(['geometry', 'lmargin=1cm,rmargin=1cm']),
     ),
     content = Document(
         concatenate(
