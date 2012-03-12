@@ -1,8 +1,9 @@
 import unittest, os
-from os.path import dirname, join, exists
-#from pytextron.blocks.base import *
+import os.path
+from pytextron.blocks.base import Block
 from pytextron.blocks.latex import Document, Documentclass
-from pytextron.document import *
+from pytextron import *
+from pytextron import join, stack
 
 class TestLatexDocument(unittest.TestCase):
 
@@ -11,10 +12,10 @@ class TestLatexDocument(unittest.TestCase):
         d = Document('patate')
 
         doc = LatexDocument(preambule, d)
-        cur_dir = dirname(__file__)
-        tex_file = join(cur_dir, 'test.tex')
+        cur_dir = os.path.dirname(__file__)
+        tex_file = os.path.join(cur_dir, 'test.tex')
         pdf_file = tex_file[:-3] + 'pdf'
-        if exists(tex_file):
+        if os.path.exists(tex_file):
             os.remove(tex_file)
         doc.make_tex(tex_file)
 
@@ -26,15 +27,21 @@ class TestLatexDocument(unittest.TestCase):
         test_tex_file()
 
         doc.make_pdf(tex_file)
-        self.assertTrue(exists(pdf_file))
+        self.assertTrue(os.path.exists(pdf_file))
         os.remove(tex_file)
         os.remove(pdf_file)
 
         doc.make(cur_dir, 'test')
         test_tex_file()
-        self.assertTrue(exists(pdf_file))
+        self.assertTrue(os.path.exists(pdf_file))
         os.remove(tex_file)
         os.remove(pdf_file)
+
+    def test_join_stack(self):
+        b1 = Block('patate')
+        b2 = Block('poil')
+        self.assertEqual(join(b1,b2), 'patatepoil')
+        self.assertEqual(stack(b1,b2), 'patate\npoil')
         
 if __name__ == '__main__':
     unittest.main()
