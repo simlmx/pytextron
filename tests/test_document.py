@@ -1,13 +1,13 @@
 import unittest, os
 from os.path import dirname, join, exists
-from pytextron.blocks.base import *
-from pytextron.blocks.basic import *
+#from pytextron.blocks.base import *
+from pytextron.blocks.latex import Document, Documentclass
 from pytextron.document import *
 
 class TestLatexDocument(unittest.TestCase):
 
     def test_latex_document_tex(self):
-        preambule = ur'\documentclass{article}'
+        preambule = Documentclass('article')# ur'\documentclass{article}'
         d = Document('patate')
 
         doc = LatexDocument(preambule, d)

@@ -7,8 +7,8 @@ LatexDocument(
     ),
     content = Document(
         concatenate(
-            'Here is a nice equation',
-            DisplayEq(Frac([Sqrt('x'), 'x+y']) + '= 200'),
+            Center('Here is a nice equation'),
+            DisplayEq(r'\frac{x}{2}= 200'),
         )
     ),
 ).make('.', 'example')

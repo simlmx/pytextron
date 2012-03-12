@@ -1,6 +1,5 @@
 import unittest
 from pytextron.blocks.base import *
-from pytextron.blocks.basic import *
 
 class TestBasic(unittest.TestCase):
 

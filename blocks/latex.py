@@ -35,13 +35,13 @@ class DisplayEq(Container):
 
 # Math
 
-class Sqrt(Command):
-    name = 'sqrt'
-    min_args = 1
-
-class Frac(Command):
-    name = 'frac'
-    min_args = 2
+#class Sqrt(Command):
+#    name = 'sqrt'
+#    min_args = 1
+#
+#class Frac(Command):
+#    name = 'frac'
+#    min_args = 2
 
 if 0 :
     endl = u'\n'
