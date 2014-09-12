@@ -17,6 +17,8 @@ class LatexDocument(object):
         self.nb_compile_times = nb_compile_times
 
     def __unicode__(self):
+        print type(self.preambule)
+        print type(self.content)
         return u'{}\n\n{}'.format(self.preambule, self.content)
 
     def __str__(self):

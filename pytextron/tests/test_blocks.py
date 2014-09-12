@@ -1,5 +1,6 @@
 import unittest
-from pytextron.blocks import *
+from pytextron.blocks import (Block, Container, Environment, Command, Center, Eq,
+    Section, Subsection, Usepackage, DisplayEq)
 
 class TestBasic(unittest.TestCase):
 
@@ -9,7 +10,7 @@ class TestBasic(unittest.TestCase):
 
         self.assertEqual(unicode(a), 'patate')
         self.assertEqual(unicode(b), 'poil')
-        
+
         self.assertEqual(unicode(a + b), 'patatepoil')
         self.assertEqual(unicode(a + 'poil'), 'patatepoil')
         self.assertEqual(unicode('patate' + b), 'patatepoil')
@@ -37,8 +38,7 @@ class TestBasic(unittest.TestCase):
         c.content += ' middle2'
 
         self.assertEqual(
-            unicode(c),
-                ur'patate' '\n\t' 'middle middle2' '\n' 'poil')
+            unicode(c), ur'patate' '\n\t' 'middle middle2' '\n' 'poil')
 
     def test_environment(self):
         class EnvTest(Environment):
@@ -57,9 +57,8 @@ class TestBasic(unittest.TestCase):
                 args=['poil', 'un', 'deux'],
                 def_args = ['defpoil', 'defun'])),
             ur'\begin{test}[defpoil, defun]{poil}{un}{deux}'
-                '\n\tpatate\n'
+            '\n\tpatate\n'
             ur'\end{test}')
-
 
     def test_command(self):
         class ComTest(Command):
@@ -80,7 +79,7 @@ class TestBasic(unittest.TestCase):
                 args = '',
                 def_args ='2')),
             ur'\test[2]'
-        ) 
+        )
 
 class TestLatex(unittest.TestCase):
 

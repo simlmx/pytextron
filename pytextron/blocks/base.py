@@ -29,10 +29,10 @@ class Block(object):
         return unicode(self).encode('utf-8')
 
     def __add__(self, other):
-        return u'{0}\n{1}'.format(self, other)
+        return u'{0}{1}'.format(self, other)
 
     def __radd__(self, other):
-        return u'{0}\n{1}'.format(other, self)
+        return u'{0}{1}'.format(other, self)
 
 
 class Container(Block):
@@ -46,10 +46,8 @@ class Container(Block):
     after = ''
     indent = True
 
-    def _block_indent(self, content, tab=None):
+    def _block_indent(self, content, tab='\t'):
         """ Adds `tab` in front of each line of content. """
-        if tab is None:
-            tab = ' ' * 4
         lines = content.split('\n')
         lines = [ tab + l + '\n' for l in lines ]
         return u''.join(lines)[:-1]
