@@ -16,6 +16,12 @@ class LatexDocument(object):
             self.content = content
         self.nb_compile_times = nb_compile_times
 
+    def __unicode__(self):
+        return u'{}\n\n{}'.format(self.preambule, self.content)
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
     def make_tex(self, tex_file):
 
         if exists(tex_file):
@@ -26,9 +32,9 @@ class LatexDocument(object):
                 sys.exit()
 
         with open(tex_file, 'w') as f:
-            f.write(unicode(self.preambule))
-            f.write('\n\n')
-            f.write(unicode(self.content))
+            print self
+            print unicode(self)
+            f.write(str(self))
 
     def make_pdf(self, tex_file):
         """
@@ -55,9 +61,9 @@ class LatexDocument(object):
             for f in os.listdir(cwd):
                 if regex.match(f):
                     os.remove(f)
-    
+
     def make(self, output_dir, name):
         self.make_tex(join(output_dir, name + '.tex'))
-        self.make_pdf(join(output_dir, name + '.tex')) 
+        self.make_pdf(join(output_dir, name + '.tex'))
 
-    
+

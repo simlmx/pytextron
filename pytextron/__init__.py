@@ -1,5 +1,5 @@
 from document import *
-import blocks
+from blocks import *
 
 def join(*block_list):
     """ Concatenate a list of Blocks. """

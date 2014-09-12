@@ -11,13 +11,13 @@ class Block(object):
     #    self.content = content
     def __init__(self, content=None):
         self.assign_to_self(content=content)
-        
+
     def assign_to_self(self, **kwargs):
         for k,v in kwargs.iteritems():
             # If it's not None or if we don't already have it anyway
             if v is not None or not hasattr(self, k):
                 setattr(self, k, v)
-    
+
     @property
     def formated_content(self):
         return self.content
@@ -25,26 +25,31 @@ class Block(object):
     def __unicode__(self):
         return self.template.format(self=self)#dict(self.__dict__, **self.__class__.__dict__)
 
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
     def __add__(self, other):
-        return u'{0}{1}'.format(self, other)
+        return u'{0}\n{1}'.format(self, other)
 
     def __radd__(self, other):
-        return u'{0}{1}'.format(other, self)
+        return u'{0}\n{1}'.format(other, self)
 
 
 class Container(Block):
 
     """ Latex block with the indentation option. """
 
-    template = '{self.before}' '{self.indented_content}' '{self.after}'
+    template = ur'{self.before}{self.indented_content}{self.after}'
 
     # Change those when subclassing
     before = ''
     after = ''
     indent = True
 
-    def _block_indent(self, content, tab='\t'):
+    def _block_indent(self, content, tab=None):
         """ Adds `tab` in front of each line of content. """
+        if tab is None:
+            tab = ' ' * 4
         lines = content.split('\n')
         lines = [ tab + l + '\n' for l in lines ]
         return u''.join(lines)[:-1]
@@ -57,21 +62,21 @@ class Container(Block):
             return before + self._block_indent(unicode(self.content)) + after
         else:
             return u' %s ' % self.content
-      
+
     def __init__(self, content=None):#, indent=True):#content=None, indent=True):
         """ Constructor for Container object.
-            
+
             Arguments
                 - content
                     The content.
-                - indent (deprecated as a constructor argument) 
+                - indent (deprecated as a constructor argument)
                     Tells if we have to indent the `content`, like
                             "before
                                 inside
                             after"
                             or not :
                             "before inside after"
-                            
+
         """
         self.assign_to_self(content=content)
         super(Container, self).__init__()
@@ -101,7 +106,7 @@ class ParseArgsMixin(object):
     @property
     def formated_def_args(self):
         return self._format_any_args(self.def_args, ', ', '[%s]')
-        
+
     @property
     def formated_args(self):
         return self._format_any_args(self.args)
@@ -114,12 +119,12 @@ class ParseArgsMixin(object):
     #        raise TypeError(
     #            'The kwargs argument of the `formated_kwargs` property must be '
     #            'a dictionary')
-        
+
 
 class Environment(Container, ParseArgsMixin):
 
     """ Subclass this for latex environments. """
-    
+
     # Set this when subclassing
     name = ''
 
@@ -154,7 +159,7 @@ class Environment(Container, ParseArgsMixin):
 class Command(Block, ParseArgsMixin):
 
     r""" Subclass this for latex commands. """
-    
+
     # Set this when subclassing
     name = ''
 
