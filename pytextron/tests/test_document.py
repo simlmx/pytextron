@@ -1,14 +1,13 @@
 import unittest, os
 import os.path
-from pytextron.blocks.base import Block
-from pytextron.blocks.latex import Document, Documentclass
-from pytextron import *
-from pytextron import join, stack
+from pytextron.blocks import Block, Document, Documentclass
+from pytextron import LatexDocument
+from pytextron.utils import join, stack
 
 class TestLatexDocument(unittest.TestCase):
 
     def test_latex_document_tex(self):
-        preambule = Documentclass('article')# ur'\documentclass{article}'
+        preambule = Documentclass('article')  # ur'\documentclass{article}'
         d = Document('patate')
 
         doc = LatexDocument(preambule, d)
@@ -20,7 +19,7 @@ class TestLatexDocument(unittest.TestCase):
         doc.make_tex(tex_file)
 
         def test_tex_file():
-            self.assertEqual(open(tex_file).read(), 
+            self.assertEqual(open(tex_file).read(),
                 ur'\documentclass{article}' '\n\n'
                 ur'\begin{document}' '\n\tpatate\n'
                 ur'\end{document}')
@@ -42,7 +41,6 @@ class TestLatexDocument(unittest.TestCase):
         b2 = Block('poil')
         self.assertEqual(join(b1,b2), 'patatepoil')
         self.assertEqual(stack(b1,b2), 'patate\npoil')
-        
+
 if __name__ == '__main__':
     unittest.main()
-

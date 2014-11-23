@@ -1,5 +1,5 @@
 from pytextron.blocks import Environment, Command, Container
-from pytextron import join
+from pytextron.utils import join
 
 class Solution(Environment):
     name = 'solution'
