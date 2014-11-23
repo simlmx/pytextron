@@ -1,6 +1,6 @@
 import unittest
 from pytextron.blocks import (Block, Container, Environment, Command, Center, Eq,
-    Section, Subsection, Usepackage, DisplayEq)
+    Section, Subsection, Usepackage, DisplayEq, Tabular)
 
 class TestBasic(unittest.TestCase):
 
@@ -110,6 +110,17 @@ class TestLatex(unittest.TestCase):
             unicode(Eq('a+b')), '$ a+b $')
         self.assertEqual(
             unicode(DisplayEq('a+b')), '$$ a+b $$')
+
+    def test_tabular(self):
+        self.assertEqual(
+            unicode(Tabular([[1,2],[3,4]], hlines='all', col_def='c|c')),
+            ur'\begin{tabular}{c|c}'
+            '\n\t' ur'\hline'
+            '\n\t' ur'1 & 2 \\'
+            '\n\t' ur'\hline'
+            '\n\t' ur'3 & 4 \\'
+            '\n\t' ur'\hline'
+            '\n' ur'\end{tabular}')
 
 if __name__ == '__main__':
     unittest.main()

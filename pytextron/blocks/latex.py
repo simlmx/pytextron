@@ -3,17 +3,17 @@
 import sys
 from base import Command, Environment, Container
 
-# Some environments and commands where we only have ton 
+# Some environments and commands where we only have to
 # inherit and not subclass any fields/methods
 
 # There aren't many right now but I feel there is going to be more of those
 simple_environments = (
-'document',
-'center',
+    'document',
+    'center',
 )
 
 simple_commands = (
-'documentclass', 'usepackage',
+    'documentclass', 'usepackage',
 )
 
 def _subclass(name, base_class):
@@ -76,43 +76,51 @@ class DisplayEq(Container):
 #class Frac(Command):
 #    name = 'frac'
 
-if 0 :
-    endl = u'\n'
-    class Tabular(Block):
-        """
-        Simple tabular
-        TODO : It's a bit too simple :P
-        """
-        def __init__(self, matrix, col_type = 'c', borders=True):
-            """ `matrix` : 2d iterable """
-    
-            print 'TODO : In tabular, change Block for Container'
-    
-            nbrow = len(matrix)
-            nbcol = len(matrix[0])
-    
-            if borders:
-                cols = '|' + '|'.join([col_type]*nbcol) + '|'
-            else:
-                cols = col_type*nbcol
-                
-    
-            s = ur'\begin{tabular}{' + cols + ur'}' + endl
-    
-            middle = ''
-            if borders:
-                middle += r'\hline' + endl
-            for row in matrix:
-                middle += u' & '.join(map(unicode, row)) + ur'\\' + endl
-                if borders:
-                    middle += r'\hline' + endl
-            middle = indent(middle)
-    
-            s += middle
-            s += ur'\end{tabular}'
-    
-            self.latex_code = s
-    
-        def __unicode__(self):
-            return self.latex_code
+class Tabular(Environment):
+    """
+    Simple tabular
+    TODO : It's a bit too simple :P
+    """
+    name = 'tabular'
+    def_args = ''
 
+    def __init__(self, content, col_def = '', hlines='all'):
+        """ `content` : 2d iterable with the content of each cell
+            `col_def` : e.g. 'c|c|c|c'
+            `hlines` : 'all' : hlines everywhere
+                        TODO : only first, etc.
+        """
+        nbcol = 0
+        for c in col_def:
+            if c in 'lcrpmb':
+                nbcol += 1
+        if nbcol != len(content[0]):
+            raise ValueError('{} implies {} columns but our content has {}'.
+                    format(col_def, nbcol, len(content[0])))
+
+        self.col_def = col_def
+        self.data = content
+        if hlines not in ['all']:
+            raise ValueError('{} is not supported (yet?) for `hlines`')
+        self.hlines = hlines
+
+    @property
+    def args(self):
+        return self.col_def
+
+    @property
+    def content(self):
+        s = ''
+        endl = u'\n'
+        hline = r'\hline'
+        nbrows = len(self.data)
+        if self.hlines == 'all':
+            hlines = [True for x in xrange(nbrows + 1)]
+        # TODO support more hlines possibilities
+        if hlines[0]:
+            s += hline + endl
+        for row,hl in zip(self.data, hlines[1:]):
+            s += u' & '.join(map(unicode, row)) + ur' \\' + endl
+            if hl:
+                s += r'\hline' + endl
+        return s[:-1]  # remove last \n
