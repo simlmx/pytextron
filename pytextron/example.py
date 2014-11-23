@@ -1,7 +1,9 @@
-from pytextron import *
-from pytextron.blocks import *
+from pytextron import LatexDocument, stack
+from pytextron.blocks import (Command, Documentclass, Usepackage, Document, Center,
+    DisplayEq)
 
-class Geometry(Command): name = 'geometry'
+class Geometry(Command):
+    name = 'geometry'
 
 LatexDocument(
     preambule = stack(
@@ -16,7 +18,7 @@ LatexDocument(
                 "It's quite nice as you can see : I type and type and type. "
                 "I just want to add enough text so I can see if my margins "
                 "worked as expected. Here, that should do it." r'\\'
-                ),
+            ),
             'Here is a nice equation',
             DisplayEq(r'\frac{x}{2}= 200'),
         )
