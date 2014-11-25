@@ -1,12 +1,15 @@
 import unittest
-from pytextron.blocks import (Block, Container, Environment, Command, Center, Eq,
-    Section, Subsection, Usepackage, DisplayEq, Tabular)
+from pytextron.blocks import (Block, Container, Environment, Command,
+    CommandBase, Center, Eq, Section, Subsection, Usepackage, DisplayEq,
+    Tabular, Document)
+from pytextron.utils import join, stack
 
 class TestBasic(unittest.TestCase):
 
     def test_block(self):
         a = Block('patate')
         b = Block('poil')
+        c = Block(['patate', 'poil'])
 
         self.assertEqual(unicode(a), 'patate')
         self.assertEqual(unicode(b), 'poil')
@@ -14,6 +17,8 @@ class TestBasic(unittest.TestCase):
         self.assertEqual(unicode(a + b), 'patatepoil')
         self.assertEqual(unicode(a + 'poil'), 'patatepoil')
         self.assertEqual(unicode('patate' + b), 'patatepoil')
+
+        self.assertEqual(unicode(c), 'patate\npoil')
 
     def test_container(self):
         class ConTest(Container):
@@ -61,7 +66,12 @@ class TestBasic(unittest.TestCase):
             ur'\end{test}')
 
     def test_command(self):
-        class ComTest(Command):
+
+        self.assertEqual(
+            unicode(Command('patate', ['poil'], ['chose'])),
+            ur'\patate[chose]{poil}')
+
+        class ComTest(CommandBase):
             name = 'test'
 
         self.assertEqual(
@@ -82,6 +92,19 @@ class TestBasic(unittest.TestCase):
         )
 
 class TestLatex(unittest.TestCase):
+
+    def test_document(self):
+        self.assertEqual(
+            unicode(Document('patate')),
+            ur'\begin{document}' '\n'
+            '\t' 'patate' '\n'
+            ur'\end{document}')
+        self.assertEqual(
+            unicode(Document(['patate', 'poil'])),
+            ur'\begin{document}' '\n'
+            '\t' 'patate\n'
+            '\t' 'poil\n'
+            ur'\end{document}')
 
     def test_sections(self):
         self.assertEqual(
@@ -121,6 +144,21 @@ class TestLatex(unittest.TestCase):
             '\n\t' ur'3 & 4 \\'
             '\n\t' ur'\hline'
             '\n' ur'\end{tabular}')
+
+class TestUtils(unittest.TestCase):
+    def test_stack(self):
+        self.assertEqual(
+            stack(['patate', 'poil']), 'patate\npoil')
+        a = Block('patate')
+        b = Block('poil')
+        self.assertEqual(stack([a,b]), 'patate\npoil')
+
+    def test_join(self):
+        self.assertEqual(
+            join(['patate', 'poil']), 'patatepoil')
+        a = Block('patate')
+        b = Block('poil')
+        self.assertEqual(join([a,b]), 'patatepoil')
 
 if __name__ == '__main__':
     unittest.main()

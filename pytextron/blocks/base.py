@@ -1,5 +1,6 @@
 # TODO : loose the `indent` keyword for containers and always indent?
 # or just keep it as a class field
+from pytextron.utils import stack
 
 class Block(object):
 
@@ -20,10 +21,12 @@ class Block(object):
 
     @property
     def formated_content(self):
+        if hasattr(self.content, '__iter__'):
+            return stack(self.content)
         return self.content
 
     def __unicode__(self):
-        return self.template.format(self=self)#dict(self.__dict__, **self.__class__.__dict__)
+        return self.template.format(self=self)
 
     def __str__(self):
         return unicode(self).encode('utf-8')
@@ -49,7 +52,7 @@ class Container(Block):
     def _block_indent(self, content, tab='\t'):
         """ Adds `tab` in front of each line of content. """
         lines = content.split('\n')
-        lines = [ tab + l + '\n' for l in lines ]
+        lines = [tab + l + '\n' for l in lines]
         return u''.join(lines)[:-1]
 
     @property
@@ -57,11 +60,11 @@ class Container(Block):
         if self.indent:
             before = '\n' if self.before != '' else ''
             after = '\n' if self.after != '' else ''
-            return before + self._block_indent(unicode(self.content)) + after
+            return before + self._block_indent(unicode(self.formated_content)) + after
         else:
             return u' %s ' % self.content
 
-    def __init__(self, content=None):#, indent=True):#content=None, indent=True):
+    def __init__(self, content=None):
         """ Constructor for Container object.
 
             Arguments
@@ -89,8 +92,9 @@ class ArgumentError(ValueError):
     pass
 
 class ParseArgsMixin(object):
-
     """ Argument parsing for Command and Environment. """
+    args = ''
+    def_args = ''
 
     def _format_any_args(self, args, join_char = '}{', container='{%s}'):
         if not args:
@@ -134,7 +138,6 @@ class Environment(Container, ParseArgsMixin):
     def after(self):
         return ur'\end{{{self.name}}}'.format(self=self)
 
-
     def __init__(self, content=None, args=None, def_args=None):
         """
             Note : giving a `content` is the same as appending it to `args`
@@ -148,16 +151,17 @@ class Environment(Container, ParseArgsMixin):
         #self.args = self.parse_args(args)
         #self.def_args = self.parse_def_args(def_args)
         self.assign_to_self(
-                def_args=def_args,
-                args=args,
-                )
-        super(Environment, self).__init__(content)#, indent)
+            def_args=def_args,
+            args=args,
+        )
+        super(Environment, self).__init__(content)
 
 
-class Command(Block, ParseArgsMixin):
-
-    r""" Subclass this for latex commands. """
-
+class CommandBase(Block, ParseArgsMixin):
+    """ base class for latex Commands. This one has the constructor with no
+        'name' parameter, so that's the one you want to subclass for custom
+        commands
+    """
     # Set this when subclassing
     name = ''
 
@@ -165,3 +169,9 @@ class Command(Block, ParseArgsMixin):
 
     def __init__(self, args=None, def_args=None):
         self.assign_to_self(args=args, def_args=def_args)
+
+
+class Command(CommandBase):
+    """ generic command command """
+    def __init__(self, name, args=None, def_args=None):
+        self.assign_to_self(name=name, args=args, def_args=def_args)

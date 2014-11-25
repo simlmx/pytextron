@@ -1,5 +1,5 @@
-from pytextron.blocks import Environment, Command, Container
-from pytextron.utils import join
+from pytextron.blocks import Environment, Container
+from pytextron.utils import stack
 
 class Solution(Environment):
     name = 'solution'
@@ -16,7 +16,7 @@ class Exam(Container):
     def __init__(self, problem_list, **kwargs):
         if isinstance(problem_list, Problem):
             problem_list = [problem_list]
-        super(Exam, self).__init__(join(*problem_list))
+        super(Exam, self).__init__(stack(problem_list))
 
 
 class SolutionMixin(object):
@@ -25,10 +25,10 @@ class SolutionMixin(object):
     @property
     def content(self):
         if self.solution:
-            if not isinstance(self.solution, Solution):
-                self.solution = Solution(self.solution)
-            s = self.question + self.solution
-            return self.question + self.solution
+            sol = self.solution
+            if not isinstance(sol, Solution):
+                sol = Solution(sol)
+            return self.question + sol
         else:
             return self.question
 

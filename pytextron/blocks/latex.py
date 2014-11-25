@@ -1,7 +1,7 @@
 # TODO : Organize those in more clever files
 
 import sys
-from base import Command, Environment, Container
+from base import CommandBase, Environment, Container
 
 # Some environments and commands where we only have to
 # inherit and not subclass any fields/methods
@@ -25,7 +25,7 @@ for name in simple_environments:
     _subclass(name, Environment)
 
 for name in simple_commands:
-    _subclass(name, Command)
+    _subclass(name, CommandBase)
 
 
 # Section, subsection, subsubsection
@@ -55,7 +55,7 @@ class Subsubsection(Section):
     _name = 'subsubsection'
 
 
-class PageBreak(Command):
+class PageBreak(CommandBase):
     template = r'\pagebreak'
 
 
@@ -68,13 +68,6 @@ class DisplayEq(Container):
     indent = False
     before = after = '$$'
 
-# Math
-
-#class Sqrt(Command):
-#    name = 'sqrt'
-#
-#class Frac(Command):
-#    name = 'frac'
 
 class Tabular(Environment):
     """
@@ -82,7 +75,6 @@ class Tabular(Environment):
     TODO : It's a bit too simple :P
     """
     name = 'tabular'
-    def_args = ''
 
     def __init__(self, content, col_def = '', hlines='all'):
         """ `content` : 2d iterable with the content of each cell
