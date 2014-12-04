@@ -20,19 +20,20 @@ class TestEqexam(unittest.TestCase):
 
     def test_problem(self):
         self.assertEqual(
-            unicode(Problem('patate')),
+            unicode(Problem('patate', points='auto')),
             ur'\begin{problem*}[\auto]' '\n\tpatate\n' ur'\end{problem*}'
         )
         self.assertEqual(
             unicode(Problem('patate', solution='poil')),
-            r'\begin{problem*}[\auto]' '\n'
+            r'\begin{problem*}' '\n'
             '\t' 'patate' '\n'
             '\t' r'\begin{solution}' '\n'
             '\t\t' 'poil' '\n'
             '\t' r'\end{solution}' '\n'
             '' r'\end{problem*}')
+
         self.assertEqual(
-            unicode(Problem(
+            unicode(Problem(points = 'auto',
                 content = [Item('patate', points=4, solution = Solution('sol patate', def_args='4cm')),
                     Item('poil', points=3)])),
             ur'\begin{problem*}[\auto]' '\n'
@@ -52,10 +53,10 @@ class TestEqexam(unittest.TestCase):
         p2 = Problem('poil')
         self.assertEqual(unicode(Exam([p1,p2])),
             ur'\begin{exam}{}' '\n'
-            '\t' r'\begin{problem*}[\auto]' '\n'
+            '\t' r'\begin{problem*}' '\n'
             '\t\t' 'patate' '\n'
             '\t' r'\end{problem*}' '\n'
-            '\t' r'\begin{problem*}[\auto]' '\n'
+            '\t' r'\begin{problem*}' '\n'
             '\t\t' 'poil' '\n'
             '\t' r'\end{problem*}' '\n'
             ur'\end{exam}')
