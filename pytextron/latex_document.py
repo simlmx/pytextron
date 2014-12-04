@@ -21,9 +21,9 @@ class LatexDocument(object):
     def __str__(self):
         return unicode(self).encode('utf-8')
 
-    def make_tex(self, tex_file):
+    def make_tex(self, tex_file, force=False):
 
-        if exists(tex_file):
+        if exists(tex_file) and not force:
             choice = ''
             while choice not in ['Y', 'N']:
                 choice = raw_input("The file %s already exists. Overwrite? (Y/N) " % tex_file).upper()
@@ -43,12 +43,12 @@ class LatexDocument(object):
         if cwd == '':
             cwd = '.'
         for i in range(self.nb_compile_times):
-            subprocess.Popen([
+            subprocess.call([
                 'pdflatex',
                 '--file-line-error',
                 '--shell-escape',
                 '--synctex=1',
-                os.path.basename(tex_file)], cwd=cwd).communicate()
+                os.path.basename(tex_file)], cwd=cwd)
 
         # cleaning
         for ext in 'sol qsl synctex.gz log aux'.split():
@@ -61,6 +61,6 @@ class LatexDocument(object):
                 if regex.match(f):
                     os.remove(f)
 
-    def make(self, filename):
-        self.make_tex(join(filename + '.tex'))
+    def make(self, filename, force=False):
+        self.make_tex(join(filename + '.tex'), force)
         self.make_pdf(join(filename + '.tex'))
