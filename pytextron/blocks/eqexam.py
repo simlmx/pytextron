@@ -57,7 +57,7 @@ class Problem(Environment, SolutionMixin):
 
     name = 'problem*'
 
-    def __init__(self, content='', points='', solution=None):
+    def __init__(self, content='', points=None, solution=None):
         """
             Arguments :
                 content -- Can also be a list of `Item`s
@@ -70,4 +70,4 @@ class Problem(Environment, SolutionMixin):
             solution = solution)
         if points == 'auto':
             points = r'\auto'
-        super(Problem, self).__init__(def_args=str(points))
+        super(Problem, self).__init__(def_args=points)

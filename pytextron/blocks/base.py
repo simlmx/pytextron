@@ -93,11 +93,11 @@ class ArgumentError(ValueError):
 
 class ParseArgsMixin(object):
     """ Argument parsing for Command and Environment. """
-    args = ''
-    def_args = ''
+    args = None
+    def_args = None
 
     def _format_any_args(self, args, join_char = '}{', container='{%s}'):
-        if not args:
+        if args is None:
             return ''
         elif isinstance(args, (basestring, Block)):
             args = [args]

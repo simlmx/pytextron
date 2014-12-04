@@ -68,8 +68,20 @@ class TestBasic(unittest.TestCase):
     def test_command(self):
 
         self.assertEqual(
-            unicode(Command('patate', ['poil'], ['chose'])),
-            ur'\patate[chose]{poil}')
+            unicode(Command('patate', ['poil', '2'], 'chose')),
+            ur'\patate[chose]{poil}{2}')
+
+        self.assertEqual(
+            unicode(Command('patate', def_args=['chose'])),
+            ur'\patate[chose]')
+
+        self.assertEqual(
+            unicode(Command('patate', ['poil', 'chose'])),
+            ur'\patate{poil}{chose}')
+
+        self.assertEqual(
+            unicode(Command('patate',)),
+            ur'\patate')
 
         class ComTest(CommandBase):
             name = 'test'
@@ -86,10 +98,10 @@ class TestBasic(unittest.TestCase):
         )
         self.assertEqual(
             unicode(ComTest(
-                args = '',
                 def_args ='2')),
             ur'\test[2]'
         )
+
 
 class TestLatex(unittest.TestCase):
 
