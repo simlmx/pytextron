@@ -69,6 +69,39 @@ class DisplayEq(Container):
     before = after = '$$'
 
 
+class TableBase(Environment):
+    name = ''
+
+    def __init__(self, content):
+        """ `content` : list of list of strings
+            example : [[1,2,3],[3,4,5]] will become
+            \begin{align*}
+                1 & 2 & 3 \\
+                3 & 4 & 5 \\
+            \end{align*}
+        """
+        self.data = content
+
+    @property
+    def content(self):
+        return (r' \\' '\n').join(
+            [u' & '.join(map(unicode, row)) for row in self.data])
+
+
+class Align(TableBase):
+    # TODO test
+    name = 'align*'
+
+
+class Matrix(TableBase):
+    # TODO test
+    name = 'matrix'
+
+class Cases(TableBase):
+    # TODO
+    name = 'cases'
+
+
 class Tabular(Environment):
     """
     Simple tabular
@@ -116,3 +149,18 @@ class Tabular(Environment):
             if hl:
                 s += r'\hline' + endl
         return s[:-1]  # remove last \n
+
+class Itemize(Environment):
+    name = 'itemize'
+
+    def __init__(self, content):
+        """ content = a list of strings/blocks """
+        self.content = map(lambda x : r'\item ' + x, content)
+
+
+class Bold(CommandBase):
+    # TODO test
+    name = 'textbf'
+
+    def __init__(self, content):
+        self.args = content

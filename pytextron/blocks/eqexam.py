@@ -32,6 +32,7 @@ class SolutionMixin(object):
         else:
             return self.question
 
+
 class Item(Container, SolutionMixin):
 
     """ Item of a problem. """
@@ -53,9 +54,11 @@ class Item(Container, SolutionMixin):
             points=points)
         super(Item, self).__init__()
 
+
 class Problem(Environment, SolutionMixin):
 
     name = 'problem*'
+    solution = ''
 
     def __init__(self, content='', points=None, solution=None):
         """
@@ -71,3 +74,12 @@ class Problem(Environment, SolutionMixin):
         if points == 'auto':
             points = r'\auto'
         super(Problem, self).__init__(def_args=points)
+
+
+class Instructions(Environment):
+    # TODO test
+    name='instructions'
+
+    def __init__(self, content='', title=None):
+        self.content = content
+        self.def_args = title
