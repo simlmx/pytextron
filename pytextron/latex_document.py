@@ -22,12 +22,9 @@ class LatexDocument(object):
         return unicode(self).encode('utf-8')
 
     def make_tex(self, tex_file, force=False):
-
         if exists(tex_file) and not force:
-            choice = ''
-            while choice not in ['Y', 'N']:
-                choice = raw_input("The file %s already exists. Overwrite? (Y/N) " % tex_file).upper()
-            if choice == 'N':
+            choice = raw_input(u"The file {} already exists. Overwrite? (Y/N)".format(tex_file))
+            if not choice == 'Y':
                 sys.exit()
 
         with open(tex_file, 'w') as f:
@@ -61,6 +58,9 @@ class LatexDocument(object):
                 if regex.match(f):
                     os.remove(f)
 
-    def make(self, filename, force=False):
-        self.make_tex(join(filename + '.tex'), force)
-        self.make_pdf(join(filename + '.tex'))
+    def make(self, filename, force=False, clean_tex=False):
+        texfile = join(filename + '.tex')
+        self.make_tex(texfile, force)
+        self.make_pdf(texfile)
+        if clean_tex:
+            os.remove(texfile)

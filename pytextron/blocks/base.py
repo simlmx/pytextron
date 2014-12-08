@@ -83,9 +83,15 @@ class Container(Block):
         super(Container, self).__init__()
 
     def __add__(self, other):
+        # TODO add tests for this corner case and think about it
+        if other == '':
+            return self
         return u'{0}\n{1}'.format(self, other)
 
     def __radd__(self, other):
+        # TODO add tests for this corner case and think about it
+        if other == '':
+            return self
         return u'{1}\n{0}'.format(self, other)
 
 class ArgumentError(ValueError):

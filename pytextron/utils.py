@@ -4,4 +4,4 @@ def join(block_list):
 
 def stack(block_list):
     r""" Concatenate a list of Blocks with '\n' """
-    return '\n'.join(map(unicode,block_list))
+    return u'\n'.join(map(unicode,block_list))
