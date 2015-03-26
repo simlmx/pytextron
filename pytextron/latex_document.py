@@ -1,6 +1,6 @@
 import sys, subprocess, re, os
-from os.path import join, exists, dirname
-from pytextron.utils import stack
+from os.path import join, exists, dirname, splitext
+from pytextron.utils import stack, ask_before_overwrite
 
 class LatexDocument(object):
 
@@ -22,20 +22,21 @@ class LatexDocument(object):
         return unicode(self).encode('utf-8')
 
     def make_tex(self, tex_file, force=False):
-        if exists(tex_file) and not force:
-            choice = raw_input(u"The file {} already exists. Overwrite? (Y/N)".format(tex_file))
-            if not choice == 'Y':
-                sys.exit()
+        if not force and not ask_before_overwrite(tex_file):
+            sys.exit()
 
         with open(tex_file, 'w') as f:
             f.write(self.header)
             f.write(str(self))
 
-    def make_pdf(self, tex_file):
+    def make_pdf(self, tex_file, force=False):
         """
             Assumes the tex file has already been made.
             If not use `self.make`.
         """
+        pdf_file = splitext(tex_file)[0] + '.pdf'
+        if not force and not ask_before_overwrite(pdf_file):
+            return
         cwd = dirname(tex_file)
         if cwd == '':
             cwd = '.'
@@ -58,9 +59,9 @@ class LatexDocument(object):
                 if regex.match(f):
                     os.remove(f)
 
-    def make(self, filename, force=False, clean_tex=False):
+    def make(self, filename, force=False, clean_tex=True):
         texfile = join(filename + '.tex')
         self.make_tex(texfile, force)
-        self.make_pdf(texfile)
+        self.make_pdf(texfile, force)
         if clean_tex:
             os.remove(texfile)

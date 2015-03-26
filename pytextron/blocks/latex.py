@@ -105,7 +105,7 @@ class Cases(TableBase):
 class Tabular(Environment):
     """
     Simple tabular
-    TODO : It's a bit too simple :P
+    TODO : It's a bit simplistic
     """
     name = 'tabular'
 
