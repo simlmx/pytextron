@@ -110,6 +110,8 @@ class Tabular(Environment):
     name = 'tabular'
 
     def __init__(self, content, col_def = '', hlines='all'):
+        # TODO : default should be no lines at all and there should be a
+        # sensible default col_def (like 'ccc..c', for instance)
         """ `content` : 2d iterable with the content of each cell
             `col_def` : e.g. 'c|c|c|c'
             `hlines` : 'all' : hlines everywhere
@@ -120,12 +122,12 @@ class Tabular(Environment):
             if c in 'lcrpmb':
                 nbcol += 1
         if nbcol != len(content[0]):
-            raise ValueError('{} implies {} columns but our content has {}'.
+            raise ValueError('"{}" implies {} columns but our content has {}'.
                     format(col_def, nbcol, len(content[0])))
 
         self.col_def = col_def
         self.data = content
-        if hlines not in ['all']:
+        if hlines not in ['all', 'none']:
             raise ValueError('{} is not supported (yet?) for `hlines`')
         self.hlines = hlines
 
@@ -141,7 +143,8 @@ class Tabular(Environment):
         nbrows = len(self.data)
         if self.hlines == 'all':
             hlines = [True for x in xrange(nbrows + 1)]
-        # TODO support more hlines possibilities
+        elif self.hlines == 'none':
+            hlines = [False for x in xrange(nbrows+1)]
         if hlines[0]:
             s += hline + endl
         for row,hl in zip(self.data, hlines[1:]):
