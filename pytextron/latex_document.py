@@ -60,6 +60,12 @@ class LatexDocument(object):
                     os.remove(f)
 
     def make(self, filename, force=False, clean_tex=True):
+        # if the extension is already in the filename
+        if filename.endswith('.tex'):
+            return self.make_tex(filename)
+        if filename.endswith('.pdf'):
+            filename = splitext(filename)[0]
+
         texfile = join(filename + '.tex')
         self.make_tex(texfile, force)
         self.make_pdf(texfile, force)

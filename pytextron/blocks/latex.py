@@ -128,7 +128,8 @@ class Tabular(Environment):
         self.col_def = col_def
         self.data = content
         if hlines not in ['all', 'none']:
-            raise ValueError('{} is not supported (yet?) for `hlines`')
+            raise ValueError('{} is not supported (yet?) for `hlines`'
+                             .format(hlines))
         self.hlines = hlines
 
     @property
